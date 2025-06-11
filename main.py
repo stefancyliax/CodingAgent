@@ -9,13 +9,15 @@ from functions.get_files_info import get_files_info
 def main():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
+    VERBOSE = False 
     print("Hello from codingagent!")
 
     
     client = genai.Client(api_key=api_key)
-    if len(sys.argv) > 2: 
+    if len(sys.argv) > 1: 
         user_prompt = sys.argv[1]
-        VERBOSE=True if sys.argv[2] == "--verbose" else False
+        if len(sys.argv) > 2:
+            VERBOSE=True if sys.argv[2] == "--verbose" else False
     else:
         print('Please provide a prompt. e.g. python main.py "Why is this so hard?"')
         sys.exit(1)

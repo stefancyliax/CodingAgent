@@ -5,11 +5,12 @@ def get_files_info(working_directory, directory=None):
     working_dir_abs = os.path.abspath(working_directory)
     target_dir = os.path.abspath(os.path.join(working_dir_abs,directory))
 
+    if not target_dir.startswith(working_dir_abs):
+        return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
+
     if not os.path.isdir(target_dir):
         return f'Error: "{directory}" is not a directory'
 
-    if not target_dir.startswith(working_dir_abs):
-        return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
     
     file_list = os.listdir(target_dir)
 
@@ -23,6 +24,10 @@ def get_files_info(working_directory, directory=None):
             return "no files found"
     except Exception as e:
         return f"Error listing files: {e}"
+
+
+
+
 
 def main():
     print(get_files_info("../../","../"))
