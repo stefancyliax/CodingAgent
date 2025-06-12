@@ -3,7 +3,10 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import sys
-from functions.get_files_info import get_files_info
+from functions.get_files_info import schema_get_files_info
+from functions.get_file_content import schema_get_file_content
+from functions.run_python import schema_run_python_file
+from functions.write_file import schema_write_file
 
 
 def main():
@@ -39,69 +42,6 @@ def main():
         print('Please provide a prompt. e.g. python main.py "Why is this so hard?"')
         sys.exit(1)
     
-    schema_get_files_info = types.FunctionDeclaration(
-        name="get_files_info",
-        description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
-        parameters=types.Schema(
-            type=types.Type.OBJECT,
-            properties={
-                "directory": types.Schema(
-                    type=types.Type.STRING,
-                    description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
-                ),
-            },
-        ),
-    )
-
-
-
-    
-    schema_get_file_content = types.FunctionDeclaration(
-        name="get_file_content",
-        description="Gets the content of a file, constrained to the working directory.",
-        parameters=types.Schema(
-            type=types.Type.OBJECT,
-            properties={
-                "file_path": types.Schema(
-                    type=types.Type.STRING,
-                    description="The path to the file, relative to the working directory.",
-                ),
-            },
-        ),
-    )
-
-    schema_run_python_file = types.FunctionDeclaration(
-        name="run_python_file",
-        description="Runs a python file, constrained to the working directory.",
-        parameters=types.Schema(
-            type=types.Type.OBJECT,
-            properties={
-                "file_path": types.Schema(
-                    type=types.Type.STRING,
-                    description="The path to the python file, relative to the working directory.",
-                ),
-            },
-        ),
-    )
-
-    schema_write_file = types.FunctionDeclaration(
-        name="write_file",
-        description="Writes content to a file, constrained to the working directory.",
-        parameters=types.Schema(
-            type=types.Type.OBJECT,
-            properties={
-                "file_path": types.Schema(
-                    type=types.Type.STRING,
-                    description="The path to the file, relative to the working directory.",
-                ),
-                "content": types.Schema(
-                    type=types.Type.STRING,
-                    description="The content to write to the file.",
-                ),
-            },
-        ),
-    )
-
     available_functions = types.Tool(
     function_declarations=[
         schema_get_files_info,
