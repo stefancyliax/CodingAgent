@@ -2,16 +2,18 @@ from functions.get_files_info import get_files_info, schema_get_files_info
 from functions.get_file_content import get_file_content, schema_get_file_content
 from functions.run_python import run_python_file, schema_run_python_file
 from functions.write_file import write_file, schema_write_file
-from google.genai import types
+from functions.get_pdf_content import get_pdf_content, schema_get_pdf_content
+from google.generativeai import types as gg_types # Updated import
 
 working_directory = "./calculator"
 
-available_functions = types.Tool(
-    function_declarations=[
+available_functions = gg_types.Tool(
+    function_declarations=[ # Schemas are already updated in their respective files
         schema_get_files_info,
         schema_get_file_content,
         schema_run_python_file,
         schema_write_file,
+        schema_get_pdf_content,
         ]
     )
 
@@ -31,6 +33,7 @@ def call_function(function_call_part, verbose=False):
         "get_file_content": lambda: get_file_content(working_directory=working_directory, **function_call_part.args),
         "run_python_file": lambda: run_python_file(working_directory=working_directory, **function_call_part.args),
         "write_file": lambda: write_file(working_directory=working_directory, **function_call_part.args)
+        "get_pdf_content": lambda: get_pdf_content(working_directory=working_directory, **function_call_part.args) # New function entry
     }
 
     if verbose:
@@ -40,20 +43,20 @@ def call_function(function_call_part, verbose=False):
 
     if function_call_part.name in func_dict:
         function_result = func_dict[function_call_part.name]()
-        return types.Content(
+        return gg_types.Content( # Updated type
             role="tool",
             parts=[
-                types.Part.from_function_response(
+                gg_types.Part.from_function_response( # Updated type
                     name=function_call_part.name,
                     response={"result": function_result},
                 )
             ],
         )
     else:
-        return types.Content(
+        return gg_types.Content( # Updated type
             role="tool",
             parts=[
-                types.Part.from_function_response(
+                gg_types.Part.from_function_response( # Updated type
                     name=function_call_part.name,
                     response={"error": f"Unknown function: {function_call_part.name}"},
                 )

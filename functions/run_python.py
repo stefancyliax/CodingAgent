@@ -1,7 +1,8 @@
 import os
 import subprocess
 import sys
-from google.genai import types
+from google.generativeai import types as gg_types # Updated import
+import copy
 
 def run_python_file(working_directory, file_path):
     """
@@ -54,19 +55,17 @@ def run_python_file(working_directory, file_path):
         return f"Error: executing Python file: {target_file} with {e}"
 
 
-schema_run_python_file = types.FunctionDeclaration(
+schema_run_python_file = gg_types.FunctionDeclaration(
     name="run_python_file",
     description="Runs a python file, constrained to the working directory.",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={
-            "file_path": types.Schema(
-                type=types.Type.STRING,
-                description="The path to the python file, relative to the working directory.",
-            ),
+    parameters=copy.deepcopy({ # Pass as a dictionary, ensure deepcopy
+        "type": "object", # Use string value
+        "properties": {
+            "file_path": {
+                "type": "string", # Use string value
+                "description": "The path to the python file, relative to the working directory.",
+            },
         },
-    ),
+        "required": ["file_path"],
+    })
 )
-
-
-    

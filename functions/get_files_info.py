@@ -1,5 +1,6 @@
 import os
-from google.genai import types
+from google.generativeai import types as gg_types # Updated import
+import copy
 
 
 def get_files_info(working_directory, directory=None):
@@ -38,23 +39,18 @@ def get_files_info(working_directory, directory=None):
         return f"Error listing files: {e}"
 
 
-schema_get_files_info = types.FunctionDeclaration(
+schema_get_files_info = gg_types.FunctionDeclaration(
     name="get_files_info",
     description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
-        properties={
-            "directory": types.Schema(
-                type=types.Type.STRING,
-                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
-            ),
+    parameters=copy.deepcopy({ # Pass as a dictionary, ensure deepcopy
+        "type": "object", # Use string value
+        "properties": {
+            "directory": {
+                "type": "string", # Use string value
+                "description": "The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            },
         },
-    ),
+        # No "required" field for this schema
+    })
 )
-
-
-def main():
-    print(get_files_info("../../","../"))
-
-if __name__ == "__main__":
-    main()
+# Removed main() and if __name__ == "__main__": block (was already removed in previous step)

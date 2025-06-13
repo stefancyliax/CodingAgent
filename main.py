@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from google import genai # This is google.generativeai, usually aliased as genai for client
+from google.generativeai import types as gg_types # Updated import for types
 import sys
 from call_function import call_function,available_functions
 import argparse
@@ -42,13 +42,13 @@ def main():
 
     # Create LLM client with Gemini    
     try:
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(api_key=api_key) # genai client alias is fine
     except Exception as e:
         print(f"Error initializing Gemini client: {e}")
         sys.exit(1)
     
     # Call LLM    
-    messages = [types.Content(role="user", parts=[types.Part(text=user_prompt)])]
+    messages = [gg_types.Content(role="user", parts=[gg_types.Part(text=user_prompt)])] # Updated types
 
     calls = 0
     while True:
@@ -62,7 +62,7 @@ def main():
             response = client.models.generate_content(
                 model='gemini-2.0-flash-001',
                 contents=messages,
-                config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt),
+                config=gg_types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt), # Updated types
                 )
         except Exception as e:
             print(f"Error generating content: {e}")
@@ -98,7 +98,7 @@ def main():
             if not function_responses:
                 raise Exception("no function responses generated, exiting.")
         
-            messages.append(types.Content(role="tool", parts=function_responses))
+            messages.append(gg_types.Content(role="tool", parts=function_responses)) # Updated types
 
             
 
