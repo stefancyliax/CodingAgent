@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import sys
-from call_function import call_function
+from call_function import call_function,available_functions
 
 def main():
     load_dotenv()
