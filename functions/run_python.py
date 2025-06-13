@@ -27,9 +27,9 @@ def run_python_file(working_directory, file_path):
     if not target_file.endswith(".py"):
         return f'Error: "{file_path}" is not a Python file.'
 
-    print(f"DEBUG: working_dir: {working_dir_abs}")
-    print(f"DEBUG: target_file: {target_file}")
-    print(f"DEBUG: target_dir: {target_file}")
+    # print(f"DEBUG: working_dir: {working_dir_abs}")
+    # print(f"DEBUG: target_file: {target_file}")
+    # print(f"DEBUG: target_dir: {target_file}")
 
     return_string = ""
     try: 
