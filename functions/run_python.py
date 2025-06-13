@@ -4,7 +4,17 @@ import sys
 from google.genai import types
 
 def run_python_file(working_directory, file_path):
+    """
+    Runs a python file, constrained to the working directory.
 
+    Args:
+        working_directory: The working directory.
+        file_path: The path to the python file, relative to the working directory.
+
+    Returns:
+        The output of the python file, or an error message if the file could not be executed.
+    """
+    
     working_dir_abs = os.path.abspath(working_directory)
     target_file = os.path.abspath(os.path.join(working_dir_abs,file_path))
 

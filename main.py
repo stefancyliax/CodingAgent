@@ -4,8 +4,14 @@ from google import genai
 from google.genai import types
 import sys
 from call_function import call_function,available_functions
+import argparse
 
 def main():
+    """
+    Main function to set up the AI coding agent, parse user prompts,
+    initialize the Gemini client, generate content, and call functions based on the response.
+    """
+    # set up
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
     VERBOSE = False 
@@ -21,23 +27,26 @@ def main():
 
     All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
     """
+    parser = argparse.ArgumentParser(description="A helpful AI coding agent.")
+    parser.add_argument("prompt", help="The user prompt.")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose mode.")
+
+    args = parser.parse_args()
+
+    user_prompt = args.prompt
+    VERBOSE = args.verbose
+
+        
     print("Hello from codingagent!")
 
-    
+    # Create LLM client with Gemini    
     try:
         client = genai.Client(api_key=api_key)
     except Exception as e:
         print(f"Error initializing Gemini client: {e}")
         sys.exit(1)
 
-    if len(sys.argv) > 1:
-        user_prompt = sys.argv[1]
-        if len(sys.argv) > 2:
-            VERBOSE=True if sys.argv[2] == "--verbose" else False
-    else:
-        print('Please provide a prompt. e.g. python main.py "Why is this so hard?"')
-        sys.exit(1)
-    
+    # Call LLM    
     messages = [types.Content(role="user", parts=[types.Part(text=user_prompt)])]
 
     try:
@@ -50,11 +59,12 @@ def main():
         print(f"Error generating content: {e}")
         sys.exit(1)
 
-
+    # Process response
     if VERBOSE:
         print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+        if response.usage_metadata:
+            print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
     if not response.function_calls:
         return response.text
@@ -78,3 +88,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

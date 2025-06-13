@@ -3,6 +3,16 @@ from google.genai import types
 
 
 def get_files_info(working_directory, directory=None):
+    """
+    Lists files in the specified directory along with their sizes, constrained to the working directory.
+
+    Args:
+        working_directory: The working directory.
+        directory: The directory to list files from, relative to the working directory. If None, lists files in the working directory itself.
+
+    Returns:
+        A string containing the list of files and their sizes, or an error message if the directory could not be listed.
+    """
     
     working_dir_abs = os.path.abspath(working_directory)
     target_dir = os.path.abspath(os.path.join(working_dir_abs,directory or ""))

@@ -3,6 +3,16 @@ from google.genai import types
 
 
 def get_file_content(working_directory, file_path):
+    """
+    Gets the content of a file, constrained to the working directory.
+
+    Args:
+        working_directory: The working directory.
+        file_path: The path to the file, relative to the working directory.
+
+    Returns:
+        The content of the file, or an error message if the file could not be read.
+    """
     MAX_CHARS = 10000
 
     working_dir_abs = os.path.abspath(working_directory)

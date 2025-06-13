@@ -16,6 +16,16 @@ available_functions = types.Tool(
     )
 
 def call_function(function_call_part, verbose=False):
+    """
+    Calls the appropriate function based on the function_call_part.name.
+
+    Args:
+        function_call_part: The function call part from the Gemini response.
+        verbose: Whether to print verbose output.
+
+    Returns:
+        A types.Content object containing the function response.
+    """
     func_dict = {
         "get_files_info": lambda: get_files_info(working_directory=working_directory, **function_call_part.args),
         "get_file_content": lambda: get_file_content(working_directory=working_directory, **function_call_part.args),
