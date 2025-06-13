@@ -1,9 +1,12 @@
-# Project Description
+# Toy Coding Agent
 
 This project is a small demonstration of an coding agent similar to Cursor or Windsurf. 
 
 > [!WARNING]  
-> Don't use this tool! It lets write an LLM to your harddrive AND run python code. There is only very little safety build in. The authors and contributors are not responsible for any damages or losses resulting from the use of this program. Use with caution.
+> Don't use this tool! It lets write an LLM to your harddrive AND run python code. There is only very little safety build in. The authors and contributors are not responsible for any damages or losses resulting from the use of this program. 
+
+It does AI things.
+![ai fixes software](images/aisoftwarefix.png)
 
 ## How
 
