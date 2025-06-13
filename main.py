@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from google import genai # This is google.generativeai, usually aliased as genai for client
-from google.generativeai import types as gg_types # Updated import for types
+from google import genai
+from google.genai import types # Reverted import
 import sys
 from call_function import call_function,available_functions
 import argparse
@@ -48,7 +48,7 @@ def main():
         sys.exit(1)
     
     # Call LLM    
-    messages = [gg_types.Content(role="user", parts=[gg_types.Part(text=user_prompt)])] # Updated types
+    messages = [types.Content(role="user", parts=[types.Part(text=user_prompt)])] # Reverted types
 
     calls = 0
     while True:
@@ -62,7 +62,7 @@ def main():
             response = client.models.generate_content(
                 model='gemini-2.0-flash-001',
                 contents=messages,
-                config=gg_types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt), # Updated types
+                config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt), # Reverted types
                 )
         except Exception as e:
             print(f"Error generating content: {e}")
@@ -98,7 +98,7 @@ def main():
             if not function_responses:
                 raise Exception("no function responses generated, exiting.")
         
-            messages.append(gg_types.Content(role="tool", parts=function_responses)) # Updated types
+            messages.append(types.Content(role="tool", parts=function_responses)) # Reverted types
 
             
 

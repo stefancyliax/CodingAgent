@@ -1,6 +1,6 @@
 import os
-from google.generativeai import types as gg_types # Updated import
-import copy
+from google.genai import types # Reverted import
+# import copy # Removed copy as deepcopy is no longer used for schema
 
 
 def get_file_content(working_directory, file_path):
@@ -37,18 +37,18 @@ def get_file_content(working_directory, file_path):
     except Exception as e:
         return f"Error: could not read file: {e}"
 
-schema_get_file_content = gg_types.FunctionDeclaration(
+schema_get_file_content = types.FunctionDeclaration(
     name="get_file_content",
     description="Gets the content of a file, constrained to the working directory.",
-    parameters=copy.deepcopy({ # Pass as a dictionary, ensure deepcopy
-        "type": "object", # Use string value
-        "properties": {
-            "file_path": {
-                "type": "string", # Use string value
-                "description": "The path to the file, relative to the working directory.",
-            },
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to the file, relative to the working directory.",
+            ),
         },
-        "required": ["file_path"],
-    })
+        required=["file_path"]
+    ),
 )
 # Removed main() and if __name__ == "__main__": block (was already removed in previous step)

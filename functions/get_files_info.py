@@ -1,6 +1,6 @@
 import os
-from google.generativeai import types as gg_types # Updated import
-import copy
+from google.genai import types # Reverted import
+# import copy # Removed copy as deepcopy is no longer used for schema
 
 
 def get_files_info(working_directory, directory=None):
@@ -39,18 +39,19 @@ def get_files_info(working_directory, directory=None):
         return f"Error listing files: {e}"
 
 
-schema_get_files_info = gg_types.FunctionDeclaration(
+schema_get_files_info = types.FunctionDeclaration(
     name="get_files_info",
     description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
-    parameters=copy.deepcopy({ # Pass as a dictionary, ensure deepcopy
-        "type": "object", # Use string value
-        "properties": {
-            "directory": {
-                "type": "string", # Use string value
-                "description": "The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
-            },
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "directory": types.Schema(
+                type=types.Type.STRING,
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
         },
-        # No "required" field for this schema
-    })
+        # No "required" field for this schema, so it's optional.
+        # If "directory" were required, it would be: required=["directory"]
+    ),
 )
 # Removed main() and if __name__ == "__main__": block (was already removed in previous step)

@@ -1,7 +1,6 @@
 import os
 import PyPDF2
-from google.generativeai import types as gg_types # Updated import
-import copy # Import copy
+from google.genai import types
 
 MAX_CHARS = 10000
 
@@ -34,7 +33,9 @@ def get_pdf_content(working_directory, file_path):
             text = ""
             for page_num in range(len(reader.pages)):
                 page = reader.pages[page_num]
-                text += page.extract_text()
+                extracted_page_text = page.extract_text()
+                if extracted_page_text: # Ensure text was extracted
+                    text += extracted_page_text
                 if len(text) > MAX_CHARS:
                     text = text[:MAX_CHARS]
                     break
@@ -42,19 +43,17 @@ def get_pdf_content(working_directory, file_path):
     except Exception as e:
         return f"Error: could not read PDF file: {e}"
 
-schema_get_pdf_content = gg_types.FunctionDeclaration(
+schema_get_pdf_content = types.FunctionDeclaration(
     name="get_pdf_content",
     description="Extracts text content from a PDF file.",
-    parameters=copy.deepcopy({ # Pass as a dictionary, ensure deepcopy
-        "type": "object", # Use string value
-        "properties": {
-            "file_path": {
-                "type": "string", # Use string value
-                "description": "The path to the PDF file, relative to the working directory.",
-            },
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to the PDF file, relative to the working directory.",
+            ),
         },
-        "required": ["file_path"],
-    })
+        required=["file_path"]
+    ),
 )
-
-# Removed main() and if __name__ == "__main__": block for production code

@@ -3,12 +3,12 @@ from functions.get_file_content import get_file_content, schema_get_file_content
 from functions.run_python import run_python_file, schema_run_python_file
 from functions.write_file import write_file, schema_write_file
 from functions.get_pdf_content import get_pdf_content, schema_get_pdf_content
-from google.generativeai import types as gg_types # Updated import
+from google.genai import types # Reverted import
 
 working_directory = "./calculator"
 
-available_functions = gg_types.Tool(
-    function_declarations=[ # Schemas are already updated in their respective files
+available_functions = types.Tool( # Ensure this uses the reverted types
+    function_declarations=[
         schema_get_files_info,
         schema_get_file_content,
         schema_run_python_file,
@@ -32,7 +32,7 @@ def call_function(function_call_part, verbose=False):
         "get_files_info": lambda: get_files_info(working_directory=working_directory, **function_call_part.args),
         "get_file_content": lambda: get_file_content(working_directory=working_directory, **function_call_part.args),
         "run_python_file": lambda: run_python_file(working_directory=working_directory, **function_call_part.args),
-        "write_file": lambda: write_file(working_directory=working_directory, **function_call_part.args)
+        "write_file": lambda: write_file(working_directory=working_directory, **function_call_part.args),
         "get_pdf_content": lambda: get_pdf_content(working_directory=working_directory, **function_call_part.args) # New function entry
     }
 
@@ -43,20 +43,20 @@ def call_function(function_call_part, verbose=False):
 
     if function_call_part.name in func_dict:
         function_result = func_dict[function_call_part.name]()
-        return gg_types.Content( # Updated type
+        return types.Content( # Ensure this uses the reverted types
             role="tool",
             parts=[
-                gg_types.Part.from_function_response( # Updated type
+                types.Part.from_function_response( # Ensure this uses the reverted types
                     name=function_call_part.name,
                     response={"result": function_result},
                 )
             ],
         )
     else:
-        return gg_types.Content( # Updated type
+        return types.Content( # Ensure this uses the reverted types
             role="tool",
             parts=[
-                gg_types.Part.from_function_response( # Updated type
+                types.Part.from_function_response( # Ensure this uses the reverted types
                     name=function_call_part.name,
                     response={"error": f"Unknown function: {function_call_part.name}"},
                 )
