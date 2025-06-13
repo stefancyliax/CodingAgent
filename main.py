@@ -3,11 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import sys
-from functions.get_files_info import schema_get_files_info
-from functions.get_file_content import schema_get_file_content
-from functions.run_python import schema_run_python_file
-from functions.write_file import schema_write_file
-
+from call_function import call_function
 
 def main():
     load_dotenv()
@@ -42,14 +38,6 @@ def main():
         print('Please provide a prompt. e.g. python main.py "Why is this so hard?"')
         sys.exit(1)
     
-    available_functions = types.Tool(
-    function_declarations=[
-        schema_get_files_info,
-        schema_get_file_content,
-        schema_run_python_file,
-        schema_write_file,
-    ]
-)
     messages = [types.Content(role="user", parts=[types.Part(text=user_prompt)])]
 
     try:
@@ -62,23 +50,29 @@ def main():
         print(f"Error generating content: {e}")
         sys.exit(1)
 
-    if response:
-        if VERBOSE:
-            print(f"User prompt: {user_prompt}")
-            if response.usage_metadata:
-                print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-                print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-            else:
-                print("Usage metadata not available.")
-        print("Response:")
-        print(response.text)
 
-        # Check if the response contains a function call
-        if response.candidates and response.candidates[0].content and response.candidates[0].content.parts and response.candidates[0].content.parts[0].function_call:
-            function_call_part = response.candidates[0].content.parts[0].function_call
-            print(f"Calling function: {function_call_part.name}({function_call_part.args})")
-        else:
-            print("No function called.")
+    if VERBOSE:
+        print(f"User prompt: {user_prompt}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+    if not response.function_calls:
+        return response.text
+
+    function_responses = []
+    for function_call_part in response.function_calls:
+        # print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        function_call_result = call_function(function_call_part, VERBOSE)
+
+        if not function_call_result.parts[0].function_response:
+            raise Exception(f"Error: Function response empty")
+
+        function_responses.append(function_call_result.parts[0])
+        if VERBOSE:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+
+    if not function_responses:
+        raise Exception("no function responses generated, exiting.")
 
 
 
